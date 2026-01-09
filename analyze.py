@@ -148,7 +148,12 @@ def analyze_video(video_path, progress_cb=None, write_annotated=False):
         writer.release()
     return dict(id_info)
 
-def run_tracking_for_colab(video_path, out_dir="result", model_path="yolo11n.pt"):
+def run_tracking_for_colab(
+    video_path,
+    out_dir="result",
+    yolo_model_path="yolo11n.pt",
+    bytetrack_cfg="custom_bytetrack.yaml"
+):
     """
     Colab helper:
     - Generate a preview video (preview.mp4) with ID-annotated bounding boxes
@@ -158,27 +163,26 @@ def run_tracking_for_colab(video_path, out_dir="result", model_path="yolo11n.pt"
     os.makedirs(out_dir, exist_ok=True)
 
     preview_path = os.path.join(out_dir, "preview.mp4")
-    id_json_path = os.path.join(out_dir, "ids.json")
+    tracks_path = os.path.join(out_dir, "tracks.json")
 
+    # 動画サイズ取得
     cap = cv2.VideoCapture(video_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
     w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     cap.release()
 
+    # VideoWriter
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     writer = cv2.VideoWriter(preview_path, fourcc, fps, (w, h))
 
-    model = YOLO(model_path)
-
-    id_info = analyze_video(
+    # 実際の解析を実行
+    analyze_video(
         video_path=video_path,
-        model=model,
+        yolo_model_path=yolo_model_path,
+        bytetrack_cfg=bytetrack_cfg,
         writer=writer,
         progress_cb=None
     )
 
-    with open(id_json_path, "w") as f:
-        json.dump(id_info, f, indent=2)
-
-    return preview_path, id_json_path
+    return preview_path, tracks_path
