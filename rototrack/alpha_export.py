@@ -116,3 +116,30 @@ def export_alpha_by_id(
                 pass
 
     cap.release()
+
+def export_id(result_dir, target_id):
+    """
+    Colab helper:
+    - Use the same analysis results as the preview video
+    - Batch-export alpha PNGs for the specified ID
+    """
+
+    out_dir = os.path.join(result_dir, f"id_{target_id}")
+    os.makedirs(out_dir, exist_ok=True)
+
+    json_path = os.path.join(result_dir, "tracks.json")
+
+    if not os.path.exists(json_path):
+        raise FileNotFoundError("tracks.json not found. Please run analyze first.")
+
+    with open(json_path) as f:
+        tracks = json.load(f)
+
+    extract_object_with_alpha(
+        json_data=tracks,
+        frames_dir=os.path.join(result_dir, "frames"),
+        target_id=target_id,
+        output_dir=out_dir
+    )
+
+    return out_dir

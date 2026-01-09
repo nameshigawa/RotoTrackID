@@ -6,6 +6,9 @@
 
 > Select an ID → Export → Get clean alpha mattes
 
+[▶ Run in Google Colab](https://colab.research.google.com/github/nameshigawa/RotoTrackID/blob/main/colab/RotoTrackID.ipynb)
+
+
 **RotoTrackID** is an experimental video rotoscoping tool that generates  
 **alpha-matted PNG image sequences** from video using  
 **YOLO object tracking + Segment Anything Model (SAM)**.

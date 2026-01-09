@@ -147,3 +147,38 @@ def analyze_video(video_path, progress_cb=None, write_annotated=False):
     if writer is not None:
         writer.release()
     return dict(id_info)
+
+def run_tracking_for_colab(video_path, out_dir="result", model_path="yolo11n.pt"):
+    """
+    Colab helper:
+    - Generate a preview video (preview.mp4) with ID-annotated bounding boxes
+    - Save the list of detected IDs to a JSON file
+    """
+
+    os.makedirs(out_dir, exist_ok=True)
+
+    preview_path = os.path.join(out_dir, "preview.mp4")
+    id_json_path = os.path.join(out_dir, "ids.json")
+
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    cap.release()
+
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    writer = cv2.VideoWriter(preview_path, fourcc, fps, (w, h))
+
+    model = YOLO(model_path)
+
+    id_info = analyze_video(
+        video_path=video_path,
+        model=model,
+        writer=writer,
+        progress_cb=None
+    )
+
+    with open(id_json_path, "w") as f:
+        json.dump(id_info, f, indent=2)
+
+    return preview_path, id_json_path
