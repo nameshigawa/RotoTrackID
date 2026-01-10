@@ -147,14 +147,3 @@ def analyze_video(video_path, progress_cb=None, write_annotated=False):
     if writer is not None:
         writer.release()
     return dict(id_info)
-
-def run_tracking_for_colab(video_path, out_dir="result", model_path="yolo11n.pt", bytetrack_cfg=None):
-    import os
-    os.makedirs(out_dir, exist_ok=True)
-
-    preview, id_info = analyze_video(
-        video_path=video_path,
-        write_annotated=True
-    )
-
-    return preview, id_info
