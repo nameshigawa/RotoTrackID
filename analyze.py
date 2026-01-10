@@ -148,49 +148,18 @@ def analyze_video(video_path, progress_cb=None, write_annotated=False):
         writer.release()
     return dict(id_info)
 
-def run_tracking_for_colab(
-    video_path,
-    out_dir="result",
-    model_path="yolo11n.pt",
-    bytetrack_cfg="custom_bytetrack.yaml"
-):
-    # Ensure the output directory exists. This will contain any generated
-    # preview/annotated files produced during processing.
+def run_tracking_for_colab(video_path, out_dir="result", model_path="yolo11n.pt", bytetrack_cfg=None):
     os.makedirs(out_dir, exist_ok=True)
 
-    # Path for a short preview video that will be written while tracking.
-    preview_path = os.path.join(out_dir, "preview.mp4")
+    # YOLOをここでロード（Colabキャッシュ対応）
+    model = YOLO(model_path)
 
-    # Probe the input video to determine frame size and FPS so we can
-    # create a VideoWriter with the correct parameters for the preview.
-    cap = cv2.VideoCapture(video_path)
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    cap.release()
-
-    # Create a writer that will be used by `analyze_video` to emit a
-    # preview video showing annotated frames. The codec `mp4v` is used
-    # to produce an MP4 file compatible with most players.
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(preview_path, fourcc, fps, (w, h))
-
-    # Run the analysis/tracking routine. The writer is passed so the
-    # analyzer can stream annotated frames directly into the preview
-    # file while it collects per-ID statistics.
-    # NOTE: `analyze_video` is expected to accept a `writer` argument
-    # and configuration arguments for model and tracker. The caller
-    # provides `model_path` and `bytetrack_cfg` so the tracking run can
-    # use a custom model and ByteTrack configuration when running in
-    # Google Colab or similar environments.
-    analyze_video(
+    # model を analyze_video に渡す
+    preview, id_info = analyze_video(
         video_path=video_path,
-        yolo_model_path=model_path,
-        bytetrack_cfg=bytetrack_cfg,
-        writer=writer,
-        progress_cb=None
+        model=model,
+        out_dir=out_dir,
+        bytetrack_cfg=bytetrack_cfg
     )
 
-    # Return the path to the generated preview file so callers (e.g.
-    # Colab notebooks) can easily display or download the preview.
-    return preview_path
+    return preview, id_info
