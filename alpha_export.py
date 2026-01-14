@@ -31,7 +31,7 @@ def export_alpha_by_id(
     video_path,
     target_id,
     out_dir,
-    pad=80,
+    pad=60,
     progress_cb=None,
     sam_model="sam_l.pt"
 ):
@@ -84,7 +84,7 @@ def export_alpha_by_id(
                 # Convert box to integers and pad the region
                 x1, y1, x2, y2 = map(int, box)
                 h, w = frame.shape[:2]
-
+                pad = compute_dynamic_pad((x1, y1, x2, y2))
                 x1 = max(0, x1 - pad)
                 y1 = max(0, y1 - pad)
                 x2 = min(w, x2 + pad)
@@ -117,3 +117,10 @@ def export_alpha_by_id(
                 pass
 
     cap.release()
+
+def compute_dynamic_pad(bbox, min_pad=20, max_pad=80, ratio=0.3):
+    x1, y1, x2, y2 = bbox
+    w = x2 - x1
+    h = y2 - y1
+    base = int(max(w, h) * ratio)
+    return max(min_pad, min(base, max_pad))
