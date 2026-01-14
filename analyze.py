@@ -36,7 +36,7 @@ def analyze_video(video_path, progress_cb=None, write_annotated=False):
     """
 
     # Initialize the detection/tracking model
-    yolo = YOLO("yolo11n.pt")
+    yolo = YOLO("yolo11m.pt")
 
     # Open video capture and get total frame count for progress reporting
     cap = cv2.VideoCapture(video_path)

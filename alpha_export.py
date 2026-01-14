@@ -31,9 +31,9 @@ def export_alpha_by_id(
     video_path,
     target_id,
     out_dir,
-    pad=40,
+    pad=80,
     progress_cb=None,
-    sam_model="sam_b.pt"
+    sam_model="sam_l.pt"
 ):
     """Extract RGBA frames for a single tracked ID from `video_path`.
 
@@ -44,7 +44,7 @@ def export_alpha_by_id(
     """
 
     # Initialize models (assumed to exist in working directory)
-    yolo = YOLO("yolo11n.pt")
+    yolo = YOLO("yolo11m.pt")
     sam = SAM(sam_model)
 
     cap = cv2.VideoCapture(video_path)
