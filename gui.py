@@ -43,8 +43,8 @@ class AlphaToolGUI(QWidget):
         self.btn_video = QPushButton("Select Video")
         # Checkbox to optionally write an annotated MP4 during analysis
         self.chk_annotated = QCheckBox("Write annotated video (boxes + labels)")
-        # Line edit + browse button to choose SAM model path (default sam_b.pt)
-        self.le_sam = QLineEdit("sam_b.pt")
+        # Line edit + browse button to choose SAM model path (default sam_l.pt)
+        self.le_sam = QLineEdit("sam_l.pt")
         self.btn_browse_sam = QPushButton("Browse")
         self.btn_browse_sam.clicked.connect(self.browse_sam)
         self.btn_analyze = QPushButton("Analyze")
