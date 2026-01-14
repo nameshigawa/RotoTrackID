@@ -31,7 +31,6 @@ def export_alpha_by_id(
     video_path,
     target_id,
     out_dir,
-    pad=60,
     progress_cb=None,
     sam_model="sam_l.pt"
 ):
@@ -118,9 +117,9 @@ def export_alpha_by_id(
 
     cap.release()
 
-def compute_dynamic_pad(bbox, min_pad=20, max_pad=80, ratio=0.3):
+def compute_dynamic_pad(bbox, min_pad=16, max_pad=48, ratio=0.25):
     x1, y1, x2, y2 = bbox
     w = x2 - x1
     h = y2 - y1
-    base = int(max(w, h) * ratio)
-    return max(min_pad, min(base, max_pad))
+    pad = int(max(w, h) * ratio)
+    return max(min_pad, min(pad, max_pad))
